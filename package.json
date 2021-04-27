@@ -2,7 +2,11 @@
   "name": "fluent-classnames",
   "version": "0.0.1",
   "description": "",
-  "keywords": ["classnames", "proxy", "fluent"],
+  "keywords": [
+    "classnames",
+    "proxy",
+    "fluent"
+  ],
   "main": "dist/fcn.umd.js",
   "module": "dist/fcn.es5.js",
   "typings": "dist/types/fcn.d.ts",
@@ -98,7 +102,6 @@
     "jest": "^26.6.3",
     "jest-config": "^23.6.0",
     "lint-staged": "^8.0.0",
-    "lodash.camelcase": "^4.3.0",
     "prettier": "^1.14.3",
     "prompt": "^1.0.0",
     "replace-in-file": "^3.4.2",
