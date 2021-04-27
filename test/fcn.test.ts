@@ -65,14 +65,15 @@ describe('fluent modules', () => {
 })
 
 describe('fluent modules curried', () => {
+  const s = fcn(S)
   itBoth('construct simple string', () => {
-    expect(fcn(S)(s => s.root.active.someClass)).toBe('r a s')
+    expect(s(s => s.root.active.someClass)).toBe('r a s')
   })
   itBoth('retain class with truthy condition', () => {
-    expect(fcn(S)(s => s.root.active(true).someClass)).toBe('r a s')
+    expect(s(s => s.root.active(true).someClass)).toBe('r a s')
   })
   itBoth('filter out class with falsy condition', () => {
-    expect(fcn(S)(s => s.root.active(false).someClass)).toBe('r s')
+    expect(s(s => s.root.active(false).someClass)).toBe('r s')
   })
 })
 
