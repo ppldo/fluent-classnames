@@ -1,7 +1,7 @@
 {
   "name": "fluent-classnames",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.2",
+  "description": "Less verbose (and more fluent!) version of classnames",
   "keywords": [
     "classnames",
     "proxy",
