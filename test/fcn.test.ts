@@ -7,6 +7,27 @@ const S = {
   'dashed-name': 'd'
 }
 
+const globalProxy = Proxy
+
+function withoutProxy(fn: () => void) {
+  globalThis.Proxy = undefined as any
+  try {
+    fn()
+  } finally {
+    globalThis.Proxy = globalProxy
+  }
+}
+
+function itBoth(text: string, fn: () => void) {
+  it.each([true, false])(text + ' (with proxy: %p)', (withProxy: boolean) => {
+    if (!withProxy) {
+      withoutProxy(fn)
+    } else {
+      fn()
+    }
+  })
+}
+
 describe('fluent simple', () => {
   it('construct simple string', () => {
     expect(fcn(s => s.root.active.someClass)).toBe('root active someClass')
@@ -25,16 +46,16 @@ describe('fluent simple', () => {
 })
 
 describe('fluent modules', () => {
-  it('construct simple string', () => {
+  itBoth('construct simple string', () => {
     expect(fcn(S, s => s.root.active.someClass)).toBe('r a s')
     expect(fcn(S, s => s['dashed-name'].root)).toBe('d r')
   })
-  it('retain class with truthy condition', () => {
+  itBoth('retain class with truthy condition', () => {
     expect(fcn(S, s => s.root.active(true).someClass)).toBe('r a s')
     expect(fcn(S, s => s.root.active(1).someClass)).toBe('r a s')
     expect(fcn(S, s => s.root.active({}).someClass)).toBe('r a s')
   })
-  it('filter out class with falsy condition', () => {
+  itBoth('filter out class with falsy condition', () => {
     expect(fcn(S, s => s.root.active(false).someClass)).toBe('r s')
     expect(fcn(S, s => s.root.active(0).someClass)).toBe('r s')
     expect(fcn(S, s => s.root.active('').someClass)).toBe('r s')
@@ -44,30 +65,30 @@ describe('fluent modules', () => {
 })
 
 describe('fluent modules curried', () => {
-  it('construct simple string', () => {
+  itBoth('construct simple string', () => {
     expect(fcn(S)(s => s.root.active.someClass)).toBe('r a s')
   })
-  it('retain class with truthy condition', () => {
+  itBoth('retain class with truthy condition', () => {
     expect(fcn(S)(s => s.root.active(true).someClass)).toBe('r a s')
   })
-  it('filter out class with falsy condition', () => {
+  itBoth('filter out class with falsy condition', () => {
     expect(fcn(S)(s => s.root.active(false).someClass)).toBe('r s')
   })
 })
 
 describe('error use cases', () => {
-  it('throws on using of already terminated fluent object', () => {
+  itBoth('throws on using of already terminated fluent object', () => {
     let r: any
-    const t = fcn(s => {
+    const t = fcn(S, s => {
       r = s
       return s.root.active
     })
-    expect(t).toBe('root active')
+    expect(t).toBe('r a')
     expect(() => r.someClass).toThrowError('Using already terminated fluent object')
   })
-  it('throws when selector does not return fluent object', () => {
+  itBoth('throws when selector does not return fluent object', () => {
     expect(() =>
-      fcn(s => {
+      fcn(S, s => {
         s.root.active(false)
         return undefined as any
       })
@@ -75,5 +96,21 @@ describe('error use cases', () => {
   })
   it('throws on modules form with wrong class name', () => {
     expect(() => fcn(S, (s: any) => s.wrong)).toThrowError('Unknown class name: wrong')
+    withoutProxy(() => {
+      expect(() => fcn(S, (s: any) => s.wrong)).toThrowError(
+        'Selector function should always return fluent object'
+      )
+      expect(() => fcn(S, (s: any) => s.wrong())).toThrowError('s.wrong is not a function')
+      expect(() => fcn(S, (s: any) => s.wrong.wrong2)).toThrowError(
+        "Cannot read property 'wrong2' of undefined"
+      )
+    })
+  })
+  it('throws on global form without proxy', () => {
+    withoutProxy(() => {
+      expect(() => fcn(s => s.root)).toThrowError(
+        'Cannot use fluent global class names without proxy'
+      )
+    })
   })
 })

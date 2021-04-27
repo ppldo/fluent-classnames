@@ -48,33 +48,44 @@ function fcn(
   }
 
   let result: string[] | null = null
-  const p: any = new Proxy(
-    (condition: any) => {
-      if (!result) {
-        throw new Error('Using already terminated fluent object')
-      }
-      if (!condition) {
-        result.pop()
-      }
-      return p
-    },
-    {
-      get(target: any, name: string) {
-        if (!result) {
-          throw new Error('Using already terminated fluent object')
-        }
-        if (classNamesMap) {
-          if (!(name in classNamesMap)) {
-            throw new Error('Unknown class name: ' + name)
-          }
-          result.push(classNamesMap[name])
-        } else {
-          result.push(name)
-        }
-        return p
-      }
+
+  let p: any
+
+  const filterFn = (condition: any) => {
+    if (!result) {
+      throw new Error('Using already terminated fluent object')
     }
-  )
+    if (!condition) {
+      result.pop()
+    }
+    return p
+  }
+
+  const addFn = (name: string) => {
+    if (!result) {
+      throw new Error('Using already terminated fluent object')
+    }
+    if (classNamesMap) {
+      if (!(name in classNamesMap)) {
+        throw new Error('Unknown class name: ' + name)
+      }
+      result.push(classNamesMap[name])
+    } else {
+      result.push(name)
+    }
+    return p
+  }
+
+  if (typeof Proxy !== 'undefined') {
+    p = new Proxy(filterFn, { get: (_, name: string) => addFn(name) })
+  } else if (classNamesMap) {
+    p = filterFn
+    for (const key of Object.keys(classNamesMap)) {
+      Object.defineProperty(p, key, { get: () => addFn(key) })
+    }
+  } else {
+    throw new Error('Cannot use fluent global class names without proxy')
+  }
 
   function innerSelector(selector: Selector<Rec> | DynamicSelector) {
     result = []
