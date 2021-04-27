@@ -1,35 +1,46 @@
 type Rec = Record<string, string>
 
-interface FilterFun<T extends Rec> {
+interface FluentFun<T extends Rec> {
   (condition: any): FluentProps<T>
 }
 
-interface MagicKey<T extends Rec> {
+interface RecursiveFluent<T extends Rec> {
   KEY: Fluent<T>
 }
 
 type FluentProps<T extends Rec> = {
-  [Key in keyof T]: MagicKey<T>['KEY']
+  [Key in keyof T]: RecursiveFluent<Omit<T, Key>>['KEY']
 }
 
-type Fluent<T extends Rec> = FilterFun<T> & FluentProps<T>
+type Fluent<T extends Rec> = FluentFun<T> & FluentProps<T>
 
-export type Selector<T extends Rec> = (arg: FluentProps<T>) => FluentProps<T>
+export type Selector<T extends Rec> = (arg: FluentProps<T>) => FluentProps<any>
 
 export type CurriedSelector<T extends Rec> = (selector: Selector<T>) => string
 
+interface RecursiveRecord {
+  [key: string]: RecursiveRecordFun
+}
+
+interface RecursiveRecordFun {
+  (condition: any): RecursiveRecord
+  [key: string]: RecursiveRecordFun
+}
+
+type DynamicSelector = (arg: RecursiveRecord) => RecursiveRecord
+
 export { fcn }
 
-function fcn(selector: Selector<Rec>): string
+function fcn(selector: DynamicSelector): string
 function fcn<T extends Rec>(classNamesMap: T): CurriedSelector<T>
 function fcn<T extends Rec>(classNamesMap: T, selector: Selector<T>): string
 
 function fcn(
-  selectorOrCns: Rec | Selector<Rec>,
+  selectorOrCns: Rec | DynamicSelector,
   selector?: Selector<Rec>
 ): string | CurriedSelector<Rec> {
   let classNamesMap: Rec | null = null
-  let sel: Selector<Rec> | undefined = selector
+  let sel: Selector<Rec> | DynamicSelector | undefined = selector
   if (typeof selectorOrCns === 'object') {
     classNamesMap = selectorOrCns
   } else {
@@ -65,7 +76,7 @@ function fcn(
     }
   )
 
-  function innerSelector(selector: Selector<Rec>) {
+  function innerSelector(selector: Selector<Rec> | DynamicSelector) {
     result = []
     if (selector(p) !== p) {
       throw new Error('Selector function should always return fluent object')
