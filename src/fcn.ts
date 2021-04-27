@@ -22,9 +22,8 @@ interface RecursiveRecord {
   [key: string]: RecursiveRecordFun
 }
 
-interface RecursiveRecordFun {
+interface RecursiveRecordFun extends RecursiveRecord {
   (condition: any): RecursiveRecord
-  [key: string]: RecursiveRecordFun
 }
 
 type DynamicSelector = (arg: RecursiveRecord) => RecursiveRecord
