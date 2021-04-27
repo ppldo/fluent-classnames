@@ -75,7 +75,7 @@ function fcn(
     return p
   }
 
-  if (typeof Proxy !== 'undefined') {
+  if (typeof (Proxy as any) !== 'undefined') {
     p = new Proxy(filterFn, { get: (_, name: string) => addFn(name) })
   } else if (classNamesMap) {
     p = filterFn
