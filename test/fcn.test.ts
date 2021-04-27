@@ -4,7 +4,11 @@ const S = {
   root: 'r',
   active: 'a',
   someClass: 's',
-  'dashed-name': 'd'
+  'dashed-name': 'd',
+  name: 'n',
+  call: 'c',
+  apply: 'ap',
+  arguments: 'ar'
 }
 
 const globalProxy = Proxy
@@ -113,5 +117,17 @@ describe('error use cases', () => {
         'Cannot use fluent global class names without proxy'
       )
     })
+  })
+  itBoth('works with classes, which names interfere with Function properties', () => {
+    expect(
+      fcn(
+        S,
+        s =>
+          s
+            .name(1)
+            .call(1)
+            .apply(1).arguments
+      )
+    ).toBe('n c ap ar')
   })
 })
