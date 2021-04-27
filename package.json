@@ -2,17 +2,20 @@
   "name": "fluent-classnames",
   "version": "0.0.1",
   "description": "",
-  "keywords": [],
-  "main": "dist/ch-cns.umd.js",
-  "module": "dist/ch-cns.es5.js",
-  "typings": "dist/types/ch-cns.d.ts",
+  "keywords": ["classnames", "proxy", "fluent"],
+  "main": "dist/fcn.umd.js",
+  "module": "dist/fcn.es5.js",
+  "typings": "dist/types/fcn.d.ts",
   "files": [
     "dist"
   ],
-  "author": "hactr",
+  "authors": [
+    "Amareis",
+    "hactrz"
+  ],
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/ppldo/fluent-classnames"
   },
   "license": "MIT",
   "engines": {
@@ -21,7 +24,7 @@
   "scripts": {
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
-    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --theme minimal src",
     "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
@@ -88,7 +91,7 @@
     "@types/node": "^10.11.0",
     "colors": "^1.3.2",
     "commitizen": "^3.0.0",
-    "coveralls": "^3.0.2",
+    "coveralls": "^3.1.0",
     "cross-env": "^5.2.0",
     "cz-conventional-changelog": "^2.1.0",
     "husky": "^1.0.1",
@@ -114,7 +117,7 @@
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
     "tslint-config-standard": "^8.0.1",
-    "typedoc": "^0.12.0",
+    "typedoc": "^0.20.36",
     "typescript": "^4.2.4"
   }
 }

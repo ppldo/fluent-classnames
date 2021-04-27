@@ -7,7 +7,7 @@ import json from 'rollup-plugin-json'
 
 const pkg = require('./package.json')
 
-const libraryName = 'ch-cns'
+const libraryName = 'fcn'
 
 export default {
   input: `src/${libraryName}.ts`,
