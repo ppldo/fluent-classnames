@@ -80,8 +80,10 @@ function fcn(
     p = new Proxy(filterFn, { get: (_, name: string) => addFn(name) })
   } else if (classNamesMap) {
     p = filterFn
-    for (const key of Object.keys(classNamesMap)) {
-      Object.defineProperty(p, key, { get: () => addFn(key) })
+    for (const key in classNamesMap) {
+      if (classNamesMap.hasOwnProperty(key)) {
+        Object.defineProperty(p, key, { get: () => addFn(key) })
+      }
     }
   } else {
     throw new Error('Cannot use fluent global class names without proxy')
