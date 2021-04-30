@@ -3,9 +3,15 @@
   "version": "0.0.2",
   "description": "Less verbose (and more fluent!) version of classnames",
   "keywords": [
-    "classnames",
     "proxy",
-    "fluent"
+    "fluent",
+    "react",
+    "css",
+    "classes",
+    "classname",
+    "classnames",
+    "util",
+    "utility"
   ],
   "main": "dist/fcn.umd.js",
   "module": "dist/fcn.es5.js",
