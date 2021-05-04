@@ -10,7 +10,7 @@ const {Suite} = b
 function bench(name, selCall, cltfCall, calcArgs) {
   console.log(`\n# ${name}`);
   new Suite()
-    .add('classcat*   ', () => classcat.apply(classcat, [calcArgs()]))
+    .add('classcat*   ', () => classcat([calcArgs()]))
     .add('classnames  ', () => classnames.apply(classnames, calcArgs()))
     .add('clsx        ', () => clsx.apply(clsx, calcArgs()))
     .add('fcn         ', () => fcn(selCall()))
